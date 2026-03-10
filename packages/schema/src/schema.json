@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scalang-config.schema.json",
+  "$comment": "When not hosted, reference in config with: \"$schema\": \"./node_modules/@scalang/schema/schema.json\"",
+  "title": "Scalang Configuration",
+  "description": "Configuration for Scalang CLI — template generation, verification, and localization.",
+  "type": "object",
+  "required": [
+    "source",
+    "sourceLocale",
+    "targetLocales",
+    "defaultLocale",
+    "translatableFields"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor intellisense. Use \"./node_modules/@scalang/schema/schema.json\" when not hosted."
+    },
+    "source": {
+      "type": "string",
+      "description": "Path to the source OpenAPI spec file (relative to project root)",
+      "examples": ["./specs/openapi.json", "./openapi.yaml"]
+    },
+    "outputDir": {
+      "type": "string",
+      "default": "public/specs",
+      "description": "Output directory for generated per-language specs"
+    },
+    "sourceLocale": {
+      "type": "string",
+      "description": "Base/source language. BCP 47 locale code compatible with @lingo.dev/_spec and @lingo.dev/_locales (e.g. en, en-US, zh-Hans-CN).",
+      "examples": ["en", "en-US", "fr", "de", "ja", "zh-Hans-CN"]
+    },
+    "targetLocales": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Target languages to translate into. BCP 47 locale codes compatible with @lingo.dev/_locales."
+    },
+    "defaultLocale": {
+      "type": "string",
+      "description": "Default language for the root redirect. BCP 47 locale code compatible with @lingo.dev/_locales."
+    },
+    "translatableFields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "enabled", "fields"],
+        "properties": {
+          "name": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "fields": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "scalar": {
+      "type": "object",
+      "description": "Scalar API Reference configuration. Aligned with @scalar/types/api-reference apiReferenceConfigurationSchema.",
+      "properties": {
+        "title": { "type": "string", "description": "API title" },
+        "slug": { "type": "string", "description": "URL slug" },
+        "baseServerURL": { "type": "string", "description": "Base server URL" },
+        "hideClientButton": { "type": "boolean", "default": false },
+        "proxyUrl": { "type": "string", "description": "Request proxy URL" },
+        "searchHotKey": {
+          "type": "string",
+          "enum": [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h",
+            "i",
+            "j",
+            "k",
+            "l",
+            "m",
+            "n",
+            "o",
+            "p",
+            "q",
+            "r",
+            "s",
+            "t",
+            "u",
+            "v",
+            "w",
+            "x",
+            "y",
+            "z"
+          ],
+          "description": "Keyboard shortcut for search"
+        },
+        "showSidebar": { "type": "boolean", "default": true },
+        "showDeveloperTools": {
+          "type": "string",
+          "enum": ["never", "always", "localhost"],
+          "default": "localhost",
+          "description": "When to show developer tools"
+        },
+        "operationTitleSource": {
+          "type": "string",
+          "enum": ["summary", "path"],
+          "default": "summary",
+          "description": "Source for operation titles"
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "alternate",
+            "default",
+            "moon",
+            "purple",
+            "solarized",
+            "bluePlanet",
+            "deepSpace",
+            "saturn",
+            "kepler",
+            "elysiajs",
+            "fastify",
+            "mars",
+            "laserwave",
+            "none"
+          ],
+          "default": "default",
+          "description": "Scalar theme name"
+        },
+        "layout": {
+          "type": "string",
+          "enum": ["modern", "classic"],
+          "default": "modern",
+          "description": "Layout style"
+        },
+        "persistAuth": { "type": "boolean", "default": true },
+        "telemetry": { "type": "boolean", "default": true },
+        "hideModels": { "type": "boolean", "default": false },
+        "documentDownloadType": {
+          "type": "string",
+          "enum": ["none", "yaml", "json", "both", "direct"],
+          "default": "both",
+          "description": "Document download options"
+        },
+        "hideDownloadButton": { "type": "boolean" },
+        "hideTestRequestButton": { "type": "boolean", "default": false },
+        "hideSearch": { "type": "boolean", "default": false },
+        "showOperationId": { "type": "boolean", "default": false },
+        "darkMode": { "type": "boolean", "default": false },
+        "forceDarkModeState": {
+          "type": "string",
+          "enum": ["dark", "light"],
+          "description": "Force dark or light mode"
+        },
+        "hideDarkModeToggle": { "type": "boolean", "default": false },
+        "favicon": { "type": "string", "description": "Favicon URL" },
+        "customCss": {
+          "type": "string",
+          "description": "Custom CSS to inject"
+        },
+        "withDefaultFonts": { "type": "boolean", "default": true },
+        "defaultOpenFirstTag": { "type": "boolean", "default": false },
+        "defaultOpenAllTags": { "type": "boolean", "default": false },
+        "expandAllModelSections": { "type": "boolean", "default": false },
+        "expandAllResponses": { "type": "boolean", "default": false },
+        "tagsSorter": {
+          "type": "string",
+          "enum": ["alpha"],
+          "description": "Sort tags alphabetically"
+        },
+        "operationsSorter": {
+          "type": "string",
+          "enum": ["alpha", "method"],
+          "description": "Sort operations"
+        },
+        "orderSchemaPropertiesBy": {
+          "type": "string",
+          "enum": ["alpha", "preserve"],
+          "default": "preserve",
+          "description": "Order schema properties"
+        },
+        "orderRequiredPropertiesFirst": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "lingo": {
+      "type": "object",
+      "description": "Lingo.dev SDK options for OpenAPI translation. Locale fields use @lingo.dev/_spec format.",
+      "properties": {
+        "batchSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 250,
+          "default": 100
+        },
+        "idealBatchItemSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2500,
+          "default": 1000
+        },
+        "fast": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

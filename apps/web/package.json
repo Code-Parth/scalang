@@ -12,6 +12,7 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@scalang/schema": "*",
     "@scalang/ui": "*",
     "next": "16.1.5",
     "react": "^19.2.0",

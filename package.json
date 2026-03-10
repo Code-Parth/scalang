@@ -7,9 +7,12 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix && prettier --write .",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "test": "bun test tests/"
   },
   "devDependencies": {
+    "@types/node": "^22.15.3",
+    "bun-types": "latest",
     "prettier": "^3.7.4",
     "turbo": "^2.8.15",
     "typescript": "5.9.2"

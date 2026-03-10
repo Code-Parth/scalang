@@ -1,5 +1,5 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@code-parth/scalang-eslint-config",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -7,6 +7,9 @@
     "./base": "./base.js",
     "./next-js": "./next.js",
     "./react-internal": "./react-internal.js"
+  },
+  "scripts": {
+    "lint:fix": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

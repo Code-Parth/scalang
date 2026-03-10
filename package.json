@@ -1,12 +1,13 @@
 {
-  "name": "scalang",
+  "name": "@code-parth/scalang",
   "private": true,
   "scripts": {
+    "clean": "rm -rf node_modules .turbo apps/*/node_modules apps/*/.turbo packages/*/node_modules packages/*/.turbo",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint:fix": "turbo run lint:fix && prettier --write .",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "prettier": "^3.7.4",

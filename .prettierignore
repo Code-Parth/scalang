@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+build
+dist
+.turbo
+
+# Vercel
+.vercel
+
+# Lock files (optional - uncomment if you don't want to format them)
+# package-lock.json
+# bun.lockb
+# pnpm-lock.yaml
+
+# Generated files
+*.min.js
+coverage

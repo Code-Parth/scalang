@@ -1,6 +1,6 @@
 {
   "name": "@scalang/lingo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lingo.dev translation engine wrapper for Scalang",
   "private": false,
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Code-Parth/scalang.git",
     "directory": "packages/lingo"
   },
-  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "homepage": "https://github.com/Code-Parth/scalang/tree/main/packages/lingo#readme",
   "keywords": [
     "scalang",
     "lingo",

@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
-  ApiReferenceReact,
+  ScalangApiReference,
   type AnyApiReferenceConfiguration,
 } from "@scalang/react";
 import { getManifest } from "@/lib/manifest";
@@ -44,7 +44,13 @@ export default async function LangPage({ params }: PageProps) {
     content: spec,
   };
 
-  return <ApiReferenceReact configuration={configuration} />;
+  return (
+    <ScalangApiReference
+      configuration={configuration}
+      locales={manifest.locales}
+      currentLocale={lang}
+    />
+  );
 }
 
 export async function generateMetadata({

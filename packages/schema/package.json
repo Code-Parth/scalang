@@ -1,6 +1,6 @@
 {
   "name": "@scalang/schema",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Configuration schema, types, and validation for Scalang with Lingo.dev and Scalar support",
   "private": false,
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Code-Parth/scalang.git",
     "directory": "packages/schema"
   },
-  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "homepage": "https://github.com/Code-Parth/scalang/tree/main/packages/schema#readme",
   "keywords": [
     "scalang",
     "openapi",

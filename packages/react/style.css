@@ -1,1 +1,166 @@
 @import "@scalar/api-reference-react/style.css";
+
+/* Scalang Wrapper */
+.scalang-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Language Navigation Bar */
+.scalang-lang-bar {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--scalar-border-color);
+  background: var(--scalar-background-1);
+  color: var(--scalar-color-1);
+  z-index: 100;
+}
+
+.scalang-lang-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  min-height: 40px;
+}
+
+/* Left section: label + tags */
+.scalang-lang-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scalang-lang-left::-webkit-scrollbar {
+  display: none;
+}
+
+.scalang-lang-label {
+  font-family: var(--scalar-font, sans-serif);
+  font-size: var(--scalar-small, 13px);
+  color: var(--scalar-color-3);
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.scalang-lang-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.scalang-lang-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--scalar-radius);
+  border: calc(var(--scalar-border-width) * 2) solid var(--scalar-border-color);
+  background: transparent;
+  color: var(--scalar-color-2);
+  font-family: var(--scalar-font, sans-serif);
+  font-size: var(--scalar-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.scalang-lang-tag:hover {
+  background: var(--scalar-background-2);
+  color: var(--scalar-color-1);
+  border-color: color-mix(in srgb, var(--scalar-color-1) 50%, transparent);
+}
+
+.scalang-lang-tag--active {
+  background: var(--scalar-background-1);
+  color: var(--scalar-color-accent);
+  border-color: var(--scalar-color-accent);
+}
+
+.scalang-lang-tag--active:hover {
+  background: color-mix(in srgb, var(--scalar-color-accent) 50%, transparent);
+  color: var(--scalar-color-1);
+  filter: brightness(1.1);
+}
+
+/* Right section: branding */
+.scalang-lang-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.scalang-brand-powered {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--scalar-color-3);
+  font-family: var(--scalar-font, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.scalang-brand-text {
+  color: var(--scalar-color-3);
+}
+
+.scalang-brand-sep {
+  color: var(--scalar-color-3);
+  margin: 0 2px;
+}
+
+.scalang-brand-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--scalar-color-2);
+  transition: color 0.15s ease;
+  text-decoration: none;
+}
+
+.scalang-brand-link:hover {
+  color: var(--scalar-color-1);
+}
+
+/* Mobile: stack on very small screens, keep tags scrollable */
+@media (max-width: 560px) {
+  .scalang-lang-bar-inner {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 12px;
+  }
+
+  .scalang-lang-left {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .scalang-lang-label {
+    font-size: 12px;
+  }
+
+  .scalang-lang-tag {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
+  .scalang-lang-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .scalang-brand-powered {
+    font-size: 11px;
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@scalang/validate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Spec verification, English detection, and identifier validation for Scalang with Lingo.dev and Scalar",
   "private": false,
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Code-Parth/scalang.git",
     "directory": "packages/validate"
   },
-  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "homepage": "https://github.com/Code-Parth/scalang/tree/main/packages/validate#readme",
   "keywords": [
     "scalang",
     "validate",
@@ -40,10 +40,10 @@
   },
   "dependencies": {
     "@scalar/openapi-parser": "^0.25.1",
-    "@scalang/checksum": "^0.0.1",
-    "@scalang/lingo": "^0.0.1",
-    "@scalang/schema": "^0.0.1",
-    "@scalang/spec-loader": "^0.0.1"
+    "@scalang/checksum": "^0.0.2",
+    "@scalang/lingo": "^0.0.2",
+    "@scalang/schema": "^0.0.2",
+    "@scalang/spec-loader": "^0.0.2"
   },
   "devDependencies": {
     "@scalang/eslint-config": "*",

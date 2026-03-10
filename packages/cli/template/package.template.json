@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "scalang generate",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix . && prettier --write .",
     "typecheck": "tsc --noEmit",
     "generate": "scalang generate",
@@ -29,6 +28,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "prettier": "^3.8.1",

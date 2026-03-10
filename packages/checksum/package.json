@@ -1,6 +1,6 @@
 {
   "name": "@scalang/checksum",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Checksum-based caching and generation state management for Scalang",
   "private": false,
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Code-Parth/scalang.git",
     "directory": "packages/checksum"
   },
-  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "homepage": "https://github.com/Code-Parth/scalang/tree/main/packages/checksum#readme",
   "keywords": [
     "scalang",
     "checksum",

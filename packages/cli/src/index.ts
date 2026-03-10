@@ -21,7 +21,7 @@ program
   .description(
     "CLI to scaffold multilingual OpenAPI docs with Scalar and Lingo.dev"
   )
-  .version("0.0.0");
+  .version("0.0.2");
 
 program
   .command("create")

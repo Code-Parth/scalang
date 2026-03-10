@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "scalang generate",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix . && prettier --write .",
     "typecheck": "tsc --noEmit",
     "generate": "scalang generate",
@@ -17,18 +16,19 @@
     "verify:retranslate": "scalang verify --fix --retranslate"
   },
   "dependencies": {
-    "@scalang/react": "^0.0.1",
-    "@scalang/schema": "^0.0.1",
+    "@scalang/react": "^0.0.2",
+    "@scalang/schema": "^0.0.2",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@scalang/cli": "^0.0.1",
+    "@scalang/cli": "^0.0.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "prettier": "^3.8.1",

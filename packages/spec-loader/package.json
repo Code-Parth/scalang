@@ -1,6 +1,6 @@
 {
   "name": "@scalang/spec-loader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "OpenAPI spec parser, field extractor, and translation injector for Scalang using Scalar OpenAPI parser",
   "private": false,
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Code-Parth/scalang.git",
     "directory": "packages/spec-loader"
   },
-  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "homepage": "https://github.com/Code-Parth/scalang/tree/main/packages/spec-loader#readme",
   "keywords": [
     "scalang",
     "openapi",

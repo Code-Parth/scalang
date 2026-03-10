@@ -3,3 +3,8 @@ export type {
   AnyApiReferenceConfiguration,
   ApiReferenceConfigurationWithMultipleSources,
 } from "@scalar/api-reference-react";
+
+export {
+  ScalangApiReference,
+  type ScalangApiReferenceProps,
+} from "./ScalangApiReference";

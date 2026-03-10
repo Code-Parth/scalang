@@ -17,6 +17,8 @@ import {
   loadState,
   saveState,
   canSkipGeneration,
+  getLocalesToRegenerate,
+  buildLocaleChecksums,
 } from "@scalang/checksum";
 import { verifySpecs } from "@scalang/validate";
 import { loadConfig, loadEnv } from "../config";
@@ -150,7 +152,31 @@ export async function generateCommand(force: boolean): Promise<void> {
     (l: string) => l !== sourceLocale
   );
 
-  for (const locale of targetLocalesToTranslate) {
+  // Per-locale checksum: skip locales that haven't changed
+  let localesToTranslate: string[];
+  let skippedLocales: string[] = [];
+
+  if (force) {
+    localesToTranslate = targetLocalesToTranslate;
+  } else {
+    const { toRegenerate, skipped } = getLocalesToRegenerate(
+      currentSourceChecksum,
+      currentConfigChecksum,
+      targetLocalesToTranslate,
+      previousState,
+      outputDir
+    );
+    localesToTranslate = toRegenerate;
+    skippedLocales = skipped;
+
+    if (skippedLocales.length > 0) {
+      console.log(
+        `\n[skip] Skipping unchanged locales: ${skippedLocales.join(", ")}`
+      );
+    }
+  }
+
+  for (const locale of localesToTranslate) {
     console.log(`\n[i18n] Translating to ${locale}...`);
 
     try {
@@ -191,16 +217,34 @@ export async function generateCommand(force: boolean): Promise<void> {
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
   console.log(`   → ${manifestPath}`);
 
-  console.log("\n[done] Done! Generated specs for:", allLocales.join(", "));
+  if (localesToTranslate.length > 0) {
+    console.log(
+      "\n[done] Done! Translated locales:",
+      localesToTranslate.join(", ")
+    );
+  }
+  if (skippedLocales.length > 0) {
+    console.log("   Skipped (unchanged):", skippedLocales.join(", "));
+  }
   console.log(`   Output directory: ${outputDir}\n`);
 
-  // 8. Save generation state
+  // 8. Save generation state with per-locale checksums
+  const allGeneratedLocales = [sourceLocale, ...localesToTranslate];
+  const localeChecksums = buildLocaleChecksums(
+    outputDir,
+    allGeneratedLocales,
+    currentSourceChecksum,
+    currentConfigChecksum,
+    previousState?.localeChecksums
+  );
+
   saveState(outputDir, {
     sourceChecksum: currentSourceChecksum,
     configChecksum: currentConfigChecksum,
     locales: allLocales,
     fieldCount,
     generatedAt: new Date().toISOString(),
+    localeChecksums,
   });
   console.log("   [save] Generation state saved.\n");
 

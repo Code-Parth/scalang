@@ -1,6 +1,6 @@
 {
   "name": "@scalang/validate",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Spec verification, English detection, and identifier validation for Scalang with Lingo.dev and Scalar",
   "private": false,
   "license": "MIT",
@@ -40,10 +40,10 @@
   },
   "dependencies": {
     "@scalar/openapi-parser": "^0.25.1",
-    "@scalang/checksum": "^0.0.2",
-    "@scalang/lingo": "^0.0.2",
-    "@scalang/schema": "^0.0.2",
-    "@scalang/spec-loader": "^0.0.2"
+    "@scalang/checksum": "*",
+    "@scalang/lingo": "*",
+    "@scalang/schema": "*",
+    "@scalang/spec-loader": "*"
   },
   "devDependencies": {
     "@scalang/eslint-config": "*",

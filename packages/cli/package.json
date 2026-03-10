@@ -1,6 +1,6 @@
 {
   "name": "@scalang/cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CLI for generating multilingual OpenAPI documentation with Scalang using Lingo.dev and Scalar",
   "private": false,
   "license": "MIT",
@@ -46,11 +46,11 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@scalang/checksum": "^0.0.2",
-    "@scalang/lingo": "^0.0.2",
-    "@scalang/schema": "^0.0.2",
-    "@scalang/spec-loader": "^0.0.2",
-    "@scalang/validate": "^0.0.2",
+    "@scalang/checksum": "*",
+    "@scalang/lingo": "*",
+    "@scalang/schema": "*",
+    "@scalang/spec-loader": "*",
+    "@scalang/validate": "*",
     "commander": "^14.0.0",
     "picocolors": "^1.1.1"
   },

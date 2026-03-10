@@ -60,12 +60,25 @@ export function computeLocaleChecksums(
 
 // ── Generation state ─────────────────────────────────────────────
 
+export interface LocaleChecksum {
+  /** Checksum of the translated spec file for this locale */
+  specChecksum: string;
+  /** Checksum of the source spec at the time this locale was generated */
+  sourceChecksum: string;
+  /** Checksum of the config at the time this locale was generated */
+  configChecksum: string;
+  /** ISO timestamp of when this locale was last generated */
+  generatedAt: string;
+}
+
 export interface GenerationState {
   sourceChecksum: string;
   configChecksum: string;
   locales: string[];
   fieldCount: number;
   generatedAt: string;
+  /** Per-locale checksums for granular skip logic */
+  localeChecksums?: Record<string, LocaleChecksum>;
 }
 
 /**
@@ -115,6 +128,86 @@ export function canSkipGeneration(
   return (
     sourceUnchanged && configUnchanged && localesUnchanged && allSpecsExist
   );
+}
+
+/**
+ * Determine which locales need regeneration based on per-locale checksums.
+ * Returns an array of locale codes that need to be re-translated.
+ *
+ * A locale can be skipped when:
+ * - Its spec file exists on disk
+ * - It has a saved locale checksum entry
+ * - The source spec and config checksums match what was used to generate it
+ * - The spec file checksum matches what was saved
+ */
+export function getLocalesToRegenerate(
+  currentSourceChecksum: string,
+  currentConfigChecksum: string,
+  targetLocales: string[],
+  previousState: GenerationState | null,
+  outputDir: string
+): { toRegenerate: string[]; skipped: string[] } {
+  if (!previousState?.localeChecksums) {
+    return { toRegenerate: [...targetLocales], skipped: [] };
+  }
+
+  const toRegenerate: string[] = [];
+  const skipped: string[] = [];
+
+  for (const locale of targetLocales) {
+    const saved = previousState.localeChecksums[locale];
+    if (!saved) {
+      toRegenerate.push(locale);
+      continue;
+    }
+
+    const specPath = join(outputDir, `${locale}.json`);
+    if (!existsSync(specPath)) {
+      toRegenerate.push(locale);
+      continue;
+    }
+
+    const currentSpecChecksum = fileChecksum(specPath);
+
+    const sourceMatch = saved.sourceChecksum === currentSourceChecksum;
+    const configMatch = saved.configChecksum === currentConfigChecksum;
+    const specMatch = saved.specChecksum === currentSpecChecksum;
+
+    if (sourceMatch && configMatch && specMatch) {
+      skipped.push(locale);
+    } else {
+      toRegenerate.push(locale);
+    }
+  }
+
+  return { toRegenerate, skipped };
+}
+
+/**
+ * Build locale checksum entries for the locales that were just generated.
+ * Merges with any existing entries for locales that were skipped.
+ */
+export function buildLocaleChecksums(
+  outputDir: string,
+  generatedLocales: string[],
+  sourceChecksum: string,
+  configChecksum: string,
+  existingChecksums?: Record<string, LocaleChecksum>
+): Record<string, LocaleChecksum> {
+  const result: Record<string, LocaleChecksum> = { ...existingChecksums };
+  const now = new Date().toISOString();
+
+  for (const locale of generatedLocales) {
+    const specPath = join(outputDir, `${locale}.json`);
+    result[locale] = {
+      specChecksum: fileChecksum(specPath),
+      sourceChecksum,
+      configChecksum,
+      generatedAt: now,
+    };
+  }
+
+  return result;
 }
 
 // ── Retranslate cache ────────────────────────────────────────────

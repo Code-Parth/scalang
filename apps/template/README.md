@@ -72,11 +72,11 @@ Example:
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun dev` | Start Next.js dev server |
-| `bun start` | Start production server |
-| `bun run lint` | Run ESLint |
+| Script              | Description                  |
+| ------------------- | ---------------------------- |
+| `bun dev`           | Start Next.js dev server     |
+| `bun start`         | Start production server      |
+| `bun run lint`      | Run ESLint                   |
 | `bun run typecheck` | Run TypeScript type checking |
 
 ## License

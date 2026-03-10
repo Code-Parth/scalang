@@ -90,13 +90,13 @@ const parsed = parseSpecContent(rawString); // auto-detects JSON or YAML
 
 The field extractor supports flexible path patterns:
 
-| Pattern | Matches |
-|---------|---------|
-| `info.title` | Exact path |
-| `paths.*.*.summary` | Wildcard object keys |
-| `tags[*].description` | Array element iteration |
-| `paths./pets.get.summary` | Literal path keys (with `/`) |
-| `components.schemas.*.properties.*.description` | Nested wildcards |
+| Pattern                                         | Matches                      |
+| ----------------------------------------------- | ---------------------------- |
+| `info.title`                                    | Exact path                   |
+| `paths.*.*.summary`                             | Wildcard object keys         |
+| `tags[*].description`                           | Array element iteration      |
+| `paths./pets.get.summary`                       | Literal path keys (with `/`) |
+| `components.schemas.*.properties.*.description` | Nested wildcards             |
 
 ## API
 

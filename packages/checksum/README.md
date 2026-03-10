@@ -43,7 +43,7 @@ const canSkip = canSkipGeneration(
   configChecksum,
   ["en", "fr", "de"],
   previousState,
-  true, // allSpecsExist
+  true // allSpecsExist
 );
 
 if (!canSkip) {
@@ -71,10 +71,7 @@ const checksums = computeLocaleChecksums("./public/specs", ["en", "fr", "de"]);
 ### Retranslation Cache
 
 ```ts
-import {
-  loadRetranslateCache,
-  saveRetranslateCache,
-} from "@scalang/checksum";
+import { loadRetranslateCache, saveRetranslateCache } from "@scalang/checksum";
 
 const cache = loadRetranslateCache("./public/specs");
 // { "fr": ["info.title", "info.description"], ... }

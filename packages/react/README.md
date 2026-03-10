@@ -64,22 +64,22 @@ When only one locale is provided, the language selector bar is hidden:
 
 Main wrapper component. Renders the language selector bar above Scalar's API reference viewer.
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `configuration` | `ReferenceProps["configuration"]` | Scalar API reference configuration |
-| `locales` | `string[]` | Available locale codes |
-| `currentLocale` | `string` | Active locale code |
-| `onLocaleChange` | `(locale: string) => void` | Locale change handler (default: navigate to `/{locale}`) |
+| Prop             | Type                              | Description                                              |
+| ---------------- | --------------------------------- | -------------------------------------------------------- |
+| `configuration`  | `ReferenceProps["configuration"]` | Scalar API reference configuration                       |
+| `locales`        | `string[]`                        | Available locale codes                                   |
+| `currentLocale`  | `string`                          | Active locale code                                       |
+| `onLocaleChange` | `(locale: string) => void`        | Locale change handler (default: navigate to `/{locale}`) |
 
 ### `LanguageSelector`
 
 Tag-style navigation bar with locale pills and branding. Used internally by `ScalangApiReference`.
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `locales` | `string[]` | Available locale codes |
-| `currentLocale` | `string` | Active locale code |
-| `onLocaleChange` | `(locale: string) => void` | Locale change handler |
+| Prop             | Type                       | Description            |
+| ---------------- | -------------------------- | ---------------------- |
+| `locales`        | `string[]`                 | Available locale codes |
+| `currentLocale`  | `string`                   | Active locale code     |
+| `onLocaleChange` | `(locale: string) => void` | Locale change handler  |
 
 ## Styling
 

@@ -25,6 +25,7 @@ scalang create
 ```
 
 Prompts for:
+
 - Project name
 - Source OpenAPI spec (file path or URL)
 - Source locale
@@ -32,6 +33,7 @@ Prompts for:
 - Lingo.dev API key
 
 Generates:
+
 - `.scalang-config` configuration file
 - Copies the source spec into the project
 - Initializes a Next.js app from the Scalang template
@@ -51,6 +53,7 @@ Options:
 | `--retranslate` | Re-translate fields detected as identical to source |
 
 Features:
+
 - **Smart caching** — Skips generation when source spec and config haven't changed
 - **Retranslation detection** — Identifies translated values that are identical to the source (e.g., proper nouns) and optionally re-translates them
 - **Progress logging** — Shows per-locale translation progress with field counts
@@ -64,6 +67,7 @@ scalang verify
 ```
 
 Checks:
+
 - Structural integrity against source spec
 - Tag names preserved (not translated)
 - Operation IDs preserved
@@ -106,8 +110,8 @@ See [`@scalang/schema`](https://www.npmjs.com/package/@scalang/schema) for the f
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
+| Variable              | Description                                   |
+| --------------------- | --------------------------------------------- |
 | `LINGODOTDEV_API_KEY` | API key for the Lingo.dev translation service |
 
 ## License

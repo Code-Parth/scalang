@@ -57,8 +57,8 @@ const translated = await translateMap(translations, "en", "fr", 100);
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
+| Variable              | Description                                   |
+| --------------------- | --------------------------------------------- |
 | `LINGODOTDEV_API_KEY` | API key for the Lingo.dev translation service |
 
 The API key can also be passed directly to `getEngine(apiKey)`.

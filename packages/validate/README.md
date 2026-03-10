@@ -27,7 +27,9 @@ if (result.valid) {
   console.log("All specs verified");
 } else {
   for (const issue of result.issues) {
-    console.warn(`[${issue.locale}] ${issue.field}: ${issue.type} — ${issue.message}`);
+    console.warn(
+      `[${issue.locale}] ${issue.field}: ${issue.type} — ${issue.message}`
+    );
   }
 }
 ```
@@ -95,13 +97,13 @@ Restores `$ref` values from source spec into translated spec (mutates in place).
 
 ## Issue Types
 
-| Type | Description |
-|------|-------------|
-| `untranslated` | Field still contains English text |
-| `missing-field` | Field exists in source but not in translation |
-| `tag-translated` | Tag name was incorrectly translated |
-| `operationId-translated` | Operation ID was incorrectly translated |
-| `ref-translated` | `$ref` path was incorrectly translated |
+| Type                     | Description                                   |
+| ------------------------ | --------------------------------------------- |
+| `untranslated`           | Field still contains English text             |
+| `missing-field`          | Field exists in source but not in translation |
+| `tag-translated`         | Tag name was incorrectly translated           |
+| `operationId-translated` | Operation ID was incorrectly translated       |
+| `ref-translated`         | `$ref` path was incorrectly translated        |
 
 ## License
 

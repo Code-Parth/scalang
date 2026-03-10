@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@code-parth/scalang",
+      "name": "scalang",
       "devDependencies": {
         "prettier": "^3.7.4",
         "turbo": "^2.8.15",
@@ -14,14 +14,14 @@
       "name": "web",
       "version": "0.1.0",
       "dependencies": {
-        "@code-parth/scalang-ui": "*",
+        "@scalang/ui": "*",
         "next": "16.1.5",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
       },
       "devDependencies": {
-        "@code-parth/scalang-eslint-config": "*",
-        "@code-parth/scalang-typescript-config": "*",
+        "@scalang/eslint-config": "*",
+        "@scalang/typescript-config": "*",
         "@tailwindcss/postcss": "^4.2.1",
         "@types/node": "^22.15.3",
         "@types/react": "19.2.2",
@@ -32,7 +32,7 @@
       },
     },
     "packages/eslint-config": {
-      "name": "@code-parth/scalang-eslint-config",
+      "name": "@scalang/eslint-config",
       "version": "0.0.0",
       "devDependencies": {
         "@eslint/js": "^9.39.1",
@@ -49,19 +49,19 @@
       },
     },
     "packages/typescript-config": {
-      "name": "@code-parth/scalang-typescript-config",
+      "name": "@scalang/typescript-config",
       "version": "0.0.0",
     },
     "packages/ui": {
-      "name": "@code-parth/scalang-ui",
+      "name": "@scalang/ui",
       "version": "0.0.0",
       "dependencies": {
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
       },
       "devDependencies": {
-        "@code-parth/scalang-eslint-config": "*",
-        "@code-parth/scalang-typescript-config": "*",
+        "@scalang/eslint-config": "*",
+        "@scalang/typescript-config": "*",
         "@types/node": "^22.15.3",
         "@types/react": "19.2.2",
         "@types/react-dom": "19.2.2",
@@ -72,12 +72,6 @@
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
-
-    "@code-parth/scalang-eslint-config": ["@code-parth/scalang-eslint-config@workspace:packages/eslint-config"],
-
-    "@code-parth/scalang-typescript-config": ["@code-parth/scalang-typescript-config@workspace:packages/typescript-config"],
-
-    "@code-parth/scalang-ui": ["@code-parth/scalang-ui@workspace:packages/ui"],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.8.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg=="],
 
@@ -192,6 +186,12 @@
     "@nodelib/fs.stat": ["@nodelib/fs.stat@2.0.5", "", {}, "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A=="],
 
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
+
+    "@scalang/eslint-config": ["@scalang/eslint-config@workspace:packages/eslint-config"],
+
+    "@scalang/typescript-config": ["@scalang/typescript-config@workspace:packages/typescript-config"],
+
+    "@scalang/ui": ["@scalang/ui@workspace:packages/ui"],
 
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 

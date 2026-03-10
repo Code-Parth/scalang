@@ -1,5 +1,5 @@
 {
-  "name": "@code-parth/scalang-typescript-config",
+  "name": "@scalang/typescript-config",
   "version": "0.0.0",
   "private": true,
   "scripts": {

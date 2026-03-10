@@ -1,5 +1,5 @@
 {
-  "name": "@code-parth/scalang",
+  "name": "scalang",
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules .turbo apps/*/node_modules apps/*/.turbo packages/*/node_modules packages/*/.turbo",

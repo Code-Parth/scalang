@@ -12,14 +12,14 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@code-parth/scalang-ui": "*",
+    "@scalang/ui": "*",
     "next": "16.1.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@code-parth/scalang-eslint-config": "*",
-    "@code-parth/scalang-typescript-config": "*",
+    "@scalang/eslint-config": "*",
+    "@scalang/typescript-config": "*",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",

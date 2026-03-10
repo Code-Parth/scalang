@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "scalang-config.schema.json",
-  "$comment": "When not hosted, reference in config with: \"$schema\": \"./node_modules/@scalang/schema/schema.json\"",
+  "$comment": "Hosted: https://scalang.codeparth.dev/api/schema | Local: \"./node_modules/@scalang/schema/schema.json\"",
   "title": "Scalang Configuration",
   "description": "Configuration for Scalang CLI — template generation, verification, and localization.",
   "type": "object",
@@ -15,7 +15,7 @@
   "properties": {
     "$schema": {
       "type": "string",
-      "description": "JSON Schema reference for editor intellisense. Use \"./node_modules/@scalang/schema/schema.json\" when not hosted."
+      "description": "JSON Schema reference. Hosted: https://scalang.codeparth.dev/api/schema | Local: ./node_modules/@scalang/schema/schema.json"
     },
     "source": {
       "type": "string",

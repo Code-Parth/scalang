@@ -88,6 +88,7 @@ import type {
 To enable editor intellisense and validation for your config file, add `$schema`:
 
 **Hosted (when deployed):**
+
 ```json
 {
   "$schema": "https://scalang.codeparth.dev/api/schema",
@@ -102,11 +103,13 @@ To enable editor intellisense and validation for your config file, add `$schema`
 ```
 
 **Local package:**
+
 ```json
 "$schema": "./node_modules/@scalang/schema/schema.json"
 ```
 
 **Programmatic:**
+
 ```ts
 import { schema } from "@scalang/schema";
 ```
@@ -114,5 +117,11 @@ import { schema } from "@scalang/schema";
 ## Testing
 
 ```bash
-bun test  # from package, runs tests from repo tests/
+bun test  # from repo root, runs all tests including API tests
+```
+
+API tests hit `https://scalang.codeparth.dev` by default. To run against localhost:
+
+```bash
+SCALANG_API_URL=http://localhost:3000 bun test
 ```

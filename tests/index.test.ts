@@ -8,3 +8,4 @@
 import "./schema/validator";
 import "./schema/constants";
 import "./schema/config";
+import "./schema/api";

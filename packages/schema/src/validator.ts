@@ -6,7 +6,7 @@
 import { Ajv, type ValidateFunction, type ErrorObject } from "ajv";
 import { isValidLocale } from "@lingo.dev/_locales";
 import schema from "./schema.json" with { type: "json" };
-import type { ScalangConfig } from "./types.js";
+import type { ScalangConfig } from "./types";
 
 export interface ValidationResult {
   valid: boolean;

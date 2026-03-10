@@ -1,0 +1,46 @@
+{
+  "source": "./specs/openapi.json",
+  "sourceLocale": "en",
+  "targetLocales": ["fr", "de"],
+  "defaultLocale": "en",
+  "translatableFields": [
+    {
+      "name": "info",
+      "enabled": true,
+      "fields": ["info.title", "info.description"]
+    },
+    {
+      "name": "tags",
+      "enabled": true,
+      "fields": ["tags[*].description"]
+    },
+    {
+      "name": "operations",
+      "enabled": true,
+      "fields": [
+        "paths.*.*.summary",
+        "paths.*.*.description",
+        "paths.*.*.requestBody.description",
+        "paths.*.*.responses.*.description"
+      ]
+    },
+    {
+      "name": "parameters",
+      "enabled": true,
+      "fields": ["paths.*.*.parameters[*].description"]
+    },
+    {
+      "name": "schemas",
+      "enabled": true,
+      "fields": [
+        "components.schemas.*.description",
+        "components.schemas.*.properties.*.description"
+      ]
+    }
+  ],
+  "scalar": {
+    "theme": "default",
+    "layout": "modern",
+    "darkMode": true
+  }
+}

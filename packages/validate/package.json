@@ -1,0 +1,56 @@
+{
+  "name": "@scalang/validate",
+  "version": "0.0.1",
+  "description": "Spec verification, English detection, and identifier validation for Scalang with Lingo.dev and Scalar",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Code-Parth/scalang.git",
+    "directory": "packages/validate"
+  },
+  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "keywords": [
+    "scalang",
+    "validate",
+    "openapi",
+    "verification",
+    "scalar",
+    "lingo",
+    "lingo.dev"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix && prettier --write ."
+  },
+  "dependencies": {
+    "@scalar/openapi-parser": "^0.25.1",
+    "@scalang/checksum": "^0.0.1",
+    "@scalang/lingo": "^0.0.1",
+    "@scalang/schema": "^0.0.1",
+    "@scalang/spec-loader": "^0.0.1"
+  },
+  "devDependencies": {
+    "@scalang/eslint-config": "*",
+    "@scalang/typescript-config": "*",
+    "eslint": "^9.39.1",
+    "@types/node": "^22.15.3",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  }
+}

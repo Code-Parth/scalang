@@ -15,14 +15,14 @@ export type {
   LingoConfig,
   LingoLocaleConfig,
   SpecManifest,
-} from "./types.js";
-export type { LocaleCode, LocaleCodeFull, LocaleCodeShort } from "./types.js";
+} from "./types";
+export type { LocaleCode, LocaleCodeFull, LocaleCodeShort } from "./types";
 export {
   validateConfig,
   assertValidConfig,
   type ValidationResult,
   type LocaleValidationError,
-} from "./validator.js";
+} from "./validator";
 export {
   SUPPORTED_LOCALES,
   LINGO_LOCALE_CODES_SHORT,
@@ -34,4 +34,4 @@ export {
   SCALAR_SHOW_DEVELOPER_TOOLS,
   DEFAULT_TRANSLATABLE_FIELDS,
   DEFAULT_LINGO_CONFIG,
-} from "./constants.js";
+} from "./constants";

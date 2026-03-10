@@ -1,0 +1,45 @@
+{
+  "name": "@scalang/checksum",
+  "version": "0.0.1",
+  "description": "Checksum-based caching and generation state management for Scalang",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Code-Parth/scalang.git",
+    "directory": "packages/checksum"
+  },
+  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "keywords": [
+    "scalang",
+    "checksum",
+    "caching"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix && prettier --write ."
+  },
+  "devDependencies": {
+    "@scalang/eslint-config": "*",
+    "@scalang/typescript-config": "*",
+    "eslint": "^9.39.1",
+    "@types/node": "^22.15.3",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  }
+}

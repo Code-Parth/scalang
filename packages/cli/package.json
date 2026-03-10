@@ -1,0 +1,65 @@
+{
+  "name": "@scalang/cli",
+  "version": "0.0.1",
+  "description": "CLI for generating multilingual OpenAPI documentation with Scalang using Lingo.dev and Scalar",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Code-Parth/scalang.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "keywords": [
+    "scalang",
+    "cli",
+    "openapi",
+    "i18n",
+    "translation",
+    "scalar",
+    "lingo",
+    "lingo.dev"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "scalang": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf template && cp -R ../../apps/template template",
+    "build": "tsup src/index.ts --format esm --dts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix && prettier --write ."
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "@scalang/checksum": "^0.0.1",
+    "@scalang/lingo": "^0.0.1",
+    "@scalang/schema": "^0.0.1",
+    "@scalang/spec-loader": "^0.0.1",
+    "@scalang/validate": "^0.0.1",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@scalang/eslint-config": "*",
+    "@scalang/typescript-config": "*",
+    "eslint": "^9.39.1",
+    "@types/node": "^22.15.3",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  }
+}

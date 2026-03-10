@@ -1,7 +1,25 @@
 {
   "name": "@scalang/schema",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
+  "description": "Configuration schema, types, and validation for Scalang with Lingo.dev and Scalar support",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Code-Parth/scalang.git",
+    "directory": "packages/schema"
+  },
+  "homepage": "https://github.com/Code-Parth/scalang#readme",
+  "keywords": [
+    "scalang",
+    "openapi",
+    "schema",
+    "i18n",
+    "translation",
+    "scalar",
+    "lingo",
+    "lingo.dev"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +38,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "typecheck": "tsc --noEmit",
-    "lint:fix": "prettier --write .",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix && prettier --write .",
     "test": "bun test ../../tests"
   },
   "dependencies": {

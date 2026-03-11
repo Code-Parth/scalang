@@ -10,6 +10,7 @@
  */
 
 import { Command } from "commander";
+import packageJson from "../package.json";
 import { createCommand } from "./commands/create";
 import { generateCommand } from "./commands/generate";
 import { verifyCommand } from "./commands/verify";
@@ -21,7 +22,7 @@ program
   .description(
     "CLI to scaffold multilingual OpenAPI docs with Scalar and Lingo.dev"
   )
-  .version("0.0.2");
+  .version(packageJson.version);
 
 program
   .command("create")

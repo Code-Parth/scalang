@@ -23,7 +23,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@scalang/cli": "^0.0.4",
+    "@scalang/cli": "^0.0.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",

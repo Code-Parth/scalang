@@ -25,6 +25,8 @@ export {
 } from "./validator";
 export {
   SUPPORTED_LOCALES,
+  ALL_LOCALE_CODES,
+  getLocaleLabel,
   LINGO_LOCALE_CODES_SHORT,
   LINGO_LOCALE_CODES_FULL,
   SCALAR_THEMES,

@@ -3,7 +3,7 @@
  * Generates translated OpenAPI specs with smart checksum-based caching.
  */
 
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import {
   loadSpec,
@@ -19,6 +19,8 @@ import {
   canSkipGeneration,
   getLocalesToRegenerate,
   buildLocaleChecksums,
+  buildFieldChecksums,
+  getChangedFields,
 } from "@scalang/checksum";
 import { verifySpecs } from "@scalang/validate";
 import { loadConfig, loadEnv } from "../config";
@@ -180,15 +182,71 @@ export async function generateCommand(force: boolean): Promise<void> {
     console.log(`\n[i18n] Translating to ${locale}...`);
 
     try {
-      const translatedMap = await translateMap(
+      // Field-level diff: only translate changed/added fields when possible
+      const existingSpecPath = join(outputDir, `${locale}.json`);
+      const fieldDiff = getChangedFields(
         translations,
-        sourceLocale,
-        locale,
-        batchSize
+        previousState?.sourceFieldChecksums
       );
 
-      const translatedSpec = cloneSpec(spec);
-      injectTranslations(translatedSpec, translatedMap);
+      const hasExistingSpec = existsSync(existingSpecPath);
+      const hasFieldChangesOnly =
+        !force &&
+        hasExistingSpec &&
+        fieldDiff.added.length + fieldDiff.changed.length <
+          Object.keys(translations).length;
+
+      let translatedSpec;
+
+      if (hasFieldChangesOnly && fieldDiff.unchanged.length > 0) {
+        // Incremental: only translate changed + added fields
+        const changedKeys = [...fieldDiff.added, ...fieldDiff.changed];
+        console.log(
+          `   [diff] ${changedKeys.length} changed/added, ${fieldDiff.unchanged.length} unchanged, ${fieldDiff.removed.length} removed`
+        );
+
+        // Load existing translated spec
+        const existingSpec = JSON.parse(
+          readFileSync(existingSpecPath, "utf-8")
+        );
+        translatedSpec = existingSpec;
+
+        if (changedKeys.length > 0) {
+          const fieldsToTranslate: Record<string, string> = {};
+          for (const key of changedKeys) {
+            fieldsToTranslate[key] = translations[key]!;
+          }
+
+          const translatedMap = await translateMap(
+            fieldsToTranslate,
+            sourceLocale,
+            locale,
+            batchSize
+          );
+          injectTranslations(translatedSpec, translatedMap);
+          console.log(
+            `   [ok] Translated ${changedKeys.length} changed field(s)`
+          );
+        }
+
+        // Remove deleted fields by re-injecting source values (which will be absent)
+        if (fieldDiff.removed.length > 0) {
+          console.log(
+            `   [clean] Removing ${fieldDiff.removed.length} deleted field(s)`
+          );
+        }
+      } else {
+        // Full translation: new locale or force mode
+        const translatedMap = await translateMap(
+          translations,
+          sourceLocale,
+          locale,
+          batchSize
+        );
+
+        translatedSpec = cloneSpec(spec);
+        injectTranslations(translatedSpec, translatedMap);
+      }
 
       const outputPath = join(outputDir, `${locale}.json`);
       writeFileSync(
@@ -245,6 +303,7 @@ export async function generateCommand(force: boolean): Promise<void> {
     fieldCount,
     generatedAt: new Date().toISOString(),
     localeChecksums,
+    sourceFieldChecksums: buildFieldChecksums(translations),
   });
   console.log("   [save] Generation state saved.\n");
 

@@ -1,6 +1,6 @@
 {
   "name": "@scalang/cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "CLI for generating multilingual OpenAPI documentation with Scalang using Lingo.dev and Scalar",
   "private": false,
   "license": "MIT",
@@ -45,15 +45,16 @@
     "lint:fix": "eslint . --fix && prettier --write ."
   },
   "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "@inquirer/prompts": "^8.3.0",
     "@lingo.dev/_locales": "^0.3.3",
     "@lingo.dev/_spec": "^0.49.0",
     "@scalar/openapi-parser": "^0.25.1",
-    "@clack/prompts": "^0.10.0",
     "ajv": "^8.17.1",
     "commander": "^14.0.0",
     "lingo.dev": "^0.133.1",
-    "yaml": "^2.7.1",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
     "@scalang/eslint-config": "*",

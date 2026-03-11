@@ -11,7 +11,12 @@ import {
   injectTranslations,
 } from "@scalang/spec-loader";
 import { translateMap } from "@scalang/lingo";
-import { loadRetranslateCache, saveRetranslateCache } from "@scalang/checksum";
+import {
+  loadRetranslateCache,
+  saveRetranslateCache,
+  loadState,
+  getChangedFields,
+} from "@scalang/checksum";
 import {
   type VerificationResult,
   createResult,
@@ -224,6 +229,12 @@ export async function verifySpecs(
     const retranslateCache = loadRetranslateCache(outputDir);
     const cachedFields = new Set(retranslateCache[locale] ?? []);
 
+    // Extract target translations ONCE per locale (not per field)
+    const targetTranslations = extractTranslatableFields(
+      targetSpec,
+      translatableFields as TranslatableFieldGroup[]
+    );
+
     let translatedCount = 0;
     let unchangedCount = 0;
     let cachedIdenticalCount = 0;
@@ -231,10 +242,6 @@ export async function verifySpecs(
 
     for (const key of translatableKeys) {
       const sourceVal = sourceTranslations[key];
-      const targetTranslations = extractTranslatableFields(
-        targetSpec,
-        translatableFields as TranslatableFieldGroup[]
-      );
       const targetVal = targetTranslations[key];
 
       if (typeof sourceVal === "string" && typeof targetVal === "string") {
@@ -270,11 +277,29 @@ export async function verifySpecs(
       }
 
       if (retranslateMode && unchangedFields.length > 0) {
+        // Use field-level checksums to only retranslate fields that actually changed
+        const generationState = loadState(outputDir);
+        const fieldDiff = getChangedFields(
+          sourceTranslations,
+          generationState?.sourceFieldChecksums
+        );
+        const changedFieldSet = new Set([
+          ...fieldDiff.added,
+          ...fieldDiff.changed,
+        ]);
+
         const queue: Record<string, string> = {};
         for (const field of unchangedFields) {
-          const sourceVal = sourceTranslations[field];
-          if (typeof sourceVal === "string" && sourceVal.trim().length > 0) {
-            queue[field] = sourceVal;
+          // Only retranslate if this field actually changed in the source
+          // or if we have no previous field checksums (first run)
+          if (
+            !generationState?.sourceFieldChecksums ||
+            changedFieldSet.has(field)
+          ) {
+            const sourceVal = sourceTranslations[field];
+            if (typeof sourceVal === "string" && sourceVal.trim().length > 0) {
+              queue[field] = sourceVal;
+            }
           }
         }
         if (Object.keys(queue).length > 0) {
@@ -403,10 +428,6 @@ export async function verifySpecs(
 
     // ── 9. English word detection ────────────────────────────────
     console.log(`\n   [note] Untranslated content analysis (${locale}):`);
-    const targetTranslations = extractTranslatableFields(
-      targetSpec,
-      translatableFields as TranslatableFieldGroup[]
-    );
 
     let suspiciousCount = 0;
     const suspiciousFields: Array<{

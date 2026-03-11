@@ -79,6 +79,8 @@ export interface GenerationState {
   generatedAt: string;
   /** Per-locale checksums for granular skip logic */
   localeChecksums?: Record<string, LocaleChecksum>;
+  /** Per-field checksums of source translatable values at generation time */
+  sourceFieldChecksums?: Record<string, string>;
 }
 
 /**
@@ -208,6 +210,75 @@ export function buildLocaleChecksums(
   }
 
   return result;
+}
+
+// ── Field-level checksums ─────────────────────────────────────────
+
+/**
+ * Compute per-field SHA-256 checksums for a translations map.
+ */
+export function buildFieldChecksums(
+  translations: Record<string, string>
+): Record<string, string> {
+  const checksums: Record<string, string> = {};
+  for (const [key, value] of Object.entries(translations)) {
+    checksums[key] = createHash("sha256").update(value).digest("hex");
+  }
+  return checksums;
+}
+
+export interface FieldDiff {
+  /** Fields present in current but not in previous */
+  added: string[];
+  /** Fields present in both but with different values */
+  changed: string[];
+  /** Fields present in previous but not in current */
+  removed: string[];
+  /** Fields present in both with identical values */
+  unchanged: string[];
+}
+
+/**
+ * Compute which source fields have changed between generations.
+ * Compares current translations against previously saved field checksums.
+ */
+export function getChangedFields(
+  currentTranslations: Record<string, string>,
+  previousFieldChecksums: Record<string, string> | undefined
+): FieldDiff {
+  if (!previousFieldChecksums) {
+    return {
+      added: Object.keys(currentTranslations),
+      changed: [],
+      removed: [],
+      unchanged: [],
+    };
+  }
+
+  const added: string[] = [];
+  const changed: string[] = [];
+  const unchanged: string[] = [];
+
+  for (const [key, value] of Object.entries(currentTranslations)) {
+    const prevChecksum = previousFieldChecksums[key];
+    if (!prevChecksum) {
+      added.push(key);
+    } else {
+      const currentChecksum = createHash("sha256").update(value).digest("hex");
+      if (currentChecksum !== prevChecksum) {
+        changed.push(key);
+      } else {
+        unchanged.push(key);
+      }
+    }
+  }
+
+  const currentKeys = new Set(Object.keys(currentTranslations));
+  const removed = Object.keys(previousFieldChecksums).filter(
+    (key) => !currentKeys.has(key)
+  );
+
+  return { added, changed, removed, unchanged };
 }
 
 // ── Retranslate cache ────────────────────────────────────────────

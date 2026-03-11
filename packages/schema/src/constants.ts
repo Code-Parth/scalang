@@ -15,26 +15,33 @@ export const LINGO_LOCALE_CODES_SHORT = localeCodesShort;
 /** Supported locale codes (full) from @lingo.dev/_spec */
 export const LINGO_LOCALE_CODES_FULL = localeCodesFull;
 
-/** Curated locales for CLI prompts with labels. Subset of LINGO_LOCALE_CODES_SHORT. */
-export const SUPPORTED_LOCALES = [
-  { value: "en" as LocaleCodeShort, label: "English" },
-  { value: "fr" as LocaleCodeShort, label: "French" },
-  { value: "es" as LocaleCodeShort, label: "Spanish" },
-  { value: "de" as LocaleCodeShort, label: "German" },
-  { value: "ja" as LocaleCodeShort, label: "Japanese" },
-  { value: "zh" as LocaleCodeShort, label: "Chinese" },
-  { value: "ko" as LocaleCodeShort, label: "Korean" },
-  { value: "pt" as LocaleCodeShort, label: "Portuguese" },
-  { value: "it" as LocaleCodeShort, label: "Italian" },
-  { value: "ru" as LocaleCodeShort, label: "Russian" },
-  { value: "ar" as LocaleCodeShort, label: "Arabic" },
-  { value: "hi" as LocaleCodeShort, label: "Hindi" },
-  { value: "nl" as LocaleCodeShort, label: "Dutch" },
-  { value: "pl" as LocaleCodeShort, label: "Polish" },
-  { value: "tr" as LocaleCodeShort, label: "Turkish" },
-  { value: "vi" as LocaleCodeShort, label: "Vietnamese" },
-  { value: "th" as LocaleCodeShort, label: "Thai" },
-] as const;
+/** All supported locale codes (short + full, deduplicated, sorted) */
+export const ALL_LOCALE_CODES: string[] = [
+  ...new Set([...localeCodesShort, ...localeCodesFull]),
+].sort();
+
+const displayNames = new Intl.DisplayNames(["en"], { type: "language" });
+
+/** Get human-readable label for a locale code */
+export function getLocaleLabel(code: string): string {
+  try {
+    return displayNames.of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+/**
+ * All supported locales with labels for CLI prompts.
+ * Includes both short (e.g. "en") and full BCP 47 (e.g. "en-US") codes.
+ */
+export const SUPPORTED_LOCALES: ReadonlyArray<{
+  value: string;
+  label: string;
+}> = ALL_LOCALE_CODES.map((code) => ({
+  value: code,
+  label: `${getLocaleLabel(code)} (${code})`,
+}));
 
 export const SCALAR_THEMES = [
   { value: "default", label: "Default" },

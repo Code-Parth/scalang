@@ -1,11 +1,13 @@
 /**
- * Interactive CLI prompts using @clack/prompts.
- * Collects all user configuration for scaffolding a new project.
+ * Interactive CLI prompts using @clack/prompts + @inquirer/prompts.
+ * Uses @clack/prompts for most inputs, @inquirer/prompts for searchable locale selection.
  */
 
 import * as p from "@clack/prompts";
+import { checkbox, search } from "@inquirer/prompts";
 import {
   SUPPORTED_LOCALES,
+  getLocaleLabel,
   SCALAR_THEMES,
   SCALAR_LAYOUTS,
 } from "@scalang/schema";
@@ -58,53 +60,49 @@ export async function collectAnswers(
     process.exit(0);
   }
 
-  const sourceLocale = (await p.select({
-    message: "Source language of your spec?",
-    options: SUPPORTED_LOCALES.map((l) => ({
-      value: l.value,
-      label: `${l.label} (${l.value})`,
-    })),
-    initialValue: "en",
-  })) as string;
+  // Source locale defaults to English
+  const sourceLocale = "en";
+  console.log(`   Source locale: ${sourceLocale} (English)`);
 
-  if (p.isCancel(sourceLocale)) {
-    p.cancel("Operation cancelled.");
-    process.exit(0);
-  }
+  // Searchable multi-select for target locales
+  const localeChoices = SUPPORTED_LOCALES.filter(
+    (l) => l.value !== sourceLocale
+  ).map((l) => ({
+    name: l.label,
+    value: l.value,
+  }));
 
-  const targetLocales = (await p.multiselect({
-    message: "Which languages to translate into? (space to toggle)",
-    options: SUPPORTED_LOCALES.filter((l) => l.value !== sourceLocale).map(
-      (l) => ({
-        value: l.value as string,
-        label: `${l.label} (${l.value})`,
-      })
-    ),
+  const targetLocales = await checkbox({
+    message:
+      "Which languages to translate into? (type to filter, space to toggle)",
+    choices: localeChoices,
     required: true,
-  })) as string[];
+    loop: false,
+  });
 
-  if (p.isCancel(targetLocales)) {
-    p.cancel("Operation cancelled.");
+  if (!targetLocales || targetLocales.length === 0) {
+    p.cancel("At least one target locale is required.");
     process.exit(0);
   }
 
+  // Default locale — searchable single select from selected locales
   const allLocales = [sourceLocale, ...targetLocales];
-  const defaultLocale = (await p.select({
+  const defaultLocale = await search({
     message: "Default locale for the docs site?",
-    options: allLocales.map((l) => {
-      const info = SUPPORTED_LOCALES.find((sl) => sl.value === l);
-      return {
-        value: l,
-        label: info ? `${info.label} (${l})` : l,
-      };
-    }),
-    initialValue: sourceLocale,
-  })) as string;
-
-  if (p.isCancel(defaultLocale)) {
-    p.cancel("Operation cancelled.");
-    process.exit(0);
-  }
+    source: (input) => {
+      const term = (input ?? "").toLowerCase();
+      return allLocales
+        .filter((l) => {
+          const label = getLocaleLabel(l).toLowerCase();
+          return l.toLowerCase().includes(term) || label.includes(term);
+        })
+        .map((l) => ({
+          name: `${getLocaleLabel(l)} (${l})`,
+          value: l,
+        }));
+    },
+    default: sourceLocale,
+  });
 
   const scalarTheme = (await p.select({
     message: "Scalar theme?",

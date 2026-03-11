@@ -3,6 +3,7 @@ import {
   LINGO_LOCALE_CODES_SHORT,
   LINGO_LOCALE_CODES_FULL,
   SUPPORTED_LOCALES,
+  ALL_LOCALE_CODES,
   SCALAR_THEMES,
   SCALAR_LAYOUTS,
   SCALAR_DOCUMENT_DOWNLOAD_TYPES,
@@ -51,9 +52,9 @@ describe("SUPPORTED_LOCALES", () => {
     }
   });
 
-  test("all values are in LINGO_LOCALE_CODES_SHORT", () => {
+  test("all values are valid locale codes", () => {
     for (const loc of SUPPORTED_LOCALES) {
-      expect(LINGO_LOCALE_CODES_SHORT).toContain(loc.value);
+      expect(ALL_LOCALE_CODES).toContain(loc.value);
     }
   });
 

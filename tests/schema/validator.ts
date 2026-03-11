@@ -89,7 +89,9 @@ describe("validateConfig", () => {
       true
     );
     expect(
-      result.errors?.some((e) => e.message?.includes("Invalid locale"))
+      result.errors?.some((e) =>
+        e.message?.includes("must be equal to one of the allowed values")
+      )
     ).toBe(true);
   });
 
@@ -167,7 +169,9 @@ describe("assertValidConfig", () => {
       assertValidConfig(invalidConfig);
     } catch (e) {
       expect((e as Error).message).toContain("sourceLocale");
-      expect((e as Error).message).toContain("Invalid locale");
+      expect((e as Error).message).toContain(
+        "must be equal to one of the allowed values"
+      );
     }
   });
 

@@ -1,10 +1,10 @@
 /**
  * Interactive CLI prompts using @clack/prompts + @inquirer/prompts.
- * Uses @clack/prompts for most inputs, @inquirer/prompts for searchable locale selection.
+ * Uses @clack/prompts for most inputs, @inquirer/prompts for searchable single-select (default locale).
  */
 
 import * as p from "@clack/prompts";
-import { checkbox, search } from "@inquirer/prompts";
+import { search } from "@inquirer/prompts";
 import {
   SUPPORTED_LOCALES,
   getLocaleLabel,
@@ -64,21 +64,22 @@ export async function collectAnswers(
   const sourceLocale = "en";
   console.log(`   Source locale: ${sourceLocale} (English)`);
 
-  // Searchable multi-select for target locales
-  const localeChoices = SUPPORTED_LOCALES.filter(
+  // Searchable multi-select for target locales (type to filter, space to toggle)
+  const localeOptions = SUPPORTED_LOCALES.filter(
     (l) => l.value !== sourceLocale
-  ).map((l) => ({
-    name: l.label,
-    value: l.value,
-  }));
+  ).map((l) => ({ value: l.value, label: l.label }));
 
-  const targetLocales = await checkbox({
+  const targetLocales = await p.autocompleteMultiselect({
     message:
       "Which languages to translate into? (type to filter, space to toggle)",
-    choices: localeChoices,
+    options: localeOptions,
     required: true,
-    loop: false,
   });
+
+  if (p.isCancel(targetLocales)) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
 
   if (!targetLocales || targetLocales.length === 0) {
     p.cancel("At least one target locale is required.");

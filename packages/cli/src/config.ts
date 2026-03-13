@@ -4,7 +4,11 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { assertValidConfig, type ScalangConfig } from "@scalang/schema";
+import {
+  assertValidConfig,
+  resolveTranslatableFields,
+  type ScalangConfig,
+} from "@scalang/schema";
 
 const CONFIG_FILE_NAME = ".scalang-config";
 
@@ -55,6 +59,14 @@ export function loadConfig(): ScalangConfig {
   }
 
   assertValidConfig(config);
+
+  // Resolve translatableFields preset (string) to array
+  const rawFields = (
+    config as {
+      translatableFields: string | ScalangConfig["translatableFields"];
+    }
+  ).translatableFields;
+  config.translatableFields = resolveTranslatableFields(rawFields);
 
   // Apply defaults
   config.outputDir = config.outputDir ?? "public/specs";

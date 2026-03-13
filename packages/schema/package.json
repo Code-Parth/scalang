@@ -1,6 +1,6 @@
 {
   "name": "@scalang/schema",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Configuration schema, types, and validation for Scalang with Lingo.dev and Scalar support",
   "private": false,
   "license": "MIT",

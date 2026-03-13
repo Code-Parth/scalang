@@ -15,7 +15,8 @@
   "properties": {
     "$schema": {
       "type": "string",
-      "description": "JSON Schema reference. Hosted: https://scalang.codeparth.dev/api/schema | Local: ./node_modules/@scalang/schema/schema.json"
+      "default": "https://scalang.codeparth.dev/api/schema",
+      "description": "JSON Schema reference for editor intellisense. Hosted: https://scalang.codeparth.dev/api/schema"
     },
     "source": {
       "type": "string",
@@ -41,20 +42,18 @@
       "description": "Default language for the root redirect. BCP 47 locale code compatible with @lingo.dev/_locales."
     },
     "translatableFields": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["name", "enabled", "fields"],
-        "properties": {
-          "name": { "type": "string" },
-          "enabled": { "type": "boolean" },
-          "fields": {
-            "type": "array",
-            "items": { "type": "string" }
-          }
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["default", "minimal", "full"],
+          "description": "Preset: 'default'/'full' (all groups), 'minimal' (info + operations only)"
         },
-        "additionalProperties": false
-      }
+        {
+          "type": "array",
+          "items": { "$ref": "#/definitions/translatableFieldGroup" }
+        }
+      ],
+      "description": "Field groups to translate. Use preset ('default'|'minimal'|'full') or custom array."
     },
     "scalar": {
       "type": "object",
@@ -400,6 +399,26 @@
         "zh-SG",
         "zh-TW"
       ]
+    },
+    "translatableFieldGroup": {
+      "type": "object",
+      "required": ["name", "enabled", "fields"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Group identifier (e.g. info, tags, operations)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this group is enabled for translation"
+        },
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "JSONPath-like field paths (e.g. info.title, paths.*.*.summary)"
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

@@ -24,6 +24,7 @@ import { validateApiKey } from "@scalang/lingo";
 import {
   DEFAULT_TRANSLATABLE_FIELDS,
   DEFAULT_LINGO_CONFIG,
+  SCALANG_SCHEMA_URL,
 } from "@scalang/schema";
 import { collectAnswers, type UserAnswers } from "../prompts";
 import { generateCommand } from "./generate";
@@ -178,7 +179,7 @@ async function scaffoldProject(
   // Generate config
   s.start("Generating configuration...");
   const config = {
-    $schema: "./node_modules/@scalang/schema/schema/scalang-config.schema.json",
+    $schema: SCALANG_SCHEMA_URL,
     source: "./specs/openapi.json",
     outputDir: "public/specs",
     sourceLocale: answers.sourceLocale,

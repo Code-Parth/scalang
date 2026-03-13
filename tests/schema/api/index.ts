@@ -19,7 +19,7 @@ describe("GET /api/schema", () => {
     );
     const schema = (await res.json()) as Record<string, unknown>;
     expect(schema.$schema).toBe("http://json-schema.org/draft-07/schema#");
-    expect(schema.$id).toBe("scalang-config.schema.json");
+    expect(schema.$id).toBe("https://scalang.codeparth.dev/api/schema");
     expect(schema.title).toBe("Scalang Configuration");
     expect(schema.type).toBe("object");
     expect(schema.required).toEqual(

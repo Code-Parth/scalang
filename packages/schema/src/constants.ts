@@ -3,11 +3,11 @@
  * Locale codes aligned with @lingo.dev/_spec and @lingo.dev/_locales.
  */
 
-import {
-  localeCodesShort,
-  localeCodesFull,
-  type LocaleCodeShort,
-} from "@lingo.dev/_spec";
+import type { TranslatableFieldGroup } from "./types";
+import { localeCodesFull, localeCodesShort } from "@lingo.dev/_spec";
+
+/** Hosted JSON Schema URL for editor intellisense */
+export const SCALANG_SCHEMA_URL = "https://scalang.codeparth.dev/api/schema";
 
 /** Supported locale codes (short) from @lingo.dev/_spec */
 export const LINGO_LOCALE_CODES_SHORT = localeCodesShort;
@@ -110,6 +110,47 @@ export const DEFAULT_TRANSLATABLE_FIELDS = [
     ],
   },
 ] as const;
+
+/** Presets for translatableFields. Use "default"|"full" for all groups, "minimal" for info + operations only. */
+export const TRANSLATABLE_FIELDS_PRESETS: Record<
+  string,
+  TranslatableFieldGroup[]
+> = {
+  default: DEFAULT_TRANSLATABLE_FIELDS.map((g) => ({
+    name: g.name,
+    enabled: g.enabled,
+    fields: [...g.fields],
+  })),
+  full: DEFAULT_TRANSLATABLE_FIELDS.map((g) => ({
+    name: g.name,
+    enabled: g.enabled,
+    fields: [...g.fields],
+  })),
+  minimal: [
+    {
+      name: "info",
+      enabled: true,
+      fields: ["info.title", "info.summary", "info.description"],
+    },
+    {
+      name: "operations",
+      enabled: true,
+      fields: ["paths.*.*.summary", "paths.*.*.description"],
+    },
+  ],
+};
+
+/** Resolve translatableFields from preset string or array to TranslatableFieldGroup[]. */
+export function resolveTranslatableFields(
+  fields: string | TranslatableFieldGroup[]
+): TranslatableFieldGroup[] {
+  if (Array.isArray(fields)) return fields;
+  const preset = TRANSLATABLE_FIELDS_PRESETS[fields];
+  if (preset) return [...preset];
+  throw new Error(
+    `Invalid translatableFields preset: "${fields}". Use "default", "minimal", or "full".`
+  );
+}
 
 export const DEFAULT_LINGO_CONFIG = {
   batchSize: 100,

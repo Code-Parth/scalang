@@ -37,6 +37,18 @@ describe("validateConfig", () => {
     expect(result.data?.lingo?.batchSize).toBe(50);
   });
 
+  test("accepts translatableFields preset string (default, minimal, full)", () => {
+    for (const preset of ["default", "minimal", "full"] as const) {
+      const config = {
+        ...validMinimalConfig,
+        translatableFields: preset,
+      };
+      const result = validateConfig(config);
+      expect(result.valid).toBe(true);
+      expect(result.data?.translatableFields).toBe(preset);
+    }
+  });
+
   test("rejects config missing required source", () => {
     const config = { ...validMinimalConfig, source: undefined };
     const result = validateConfig(config);

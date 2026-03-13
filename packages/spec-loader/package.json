@@ -1,6 +1,6 @@
 {
   "name": "@scalang/spec-loader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "OpenAPI spec parser, field extractor, and translation injector for Scalang using Scalar OpenAPI parser",
   "private": false,
   "license": "MIT",

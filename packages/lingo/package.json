@@ -1,6 +1,6 @@
 {
   "name": "@scalang/lingo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Lingo.dev translation engine wrapper for Scalang",
   "private": false,
   "license": "MIT",

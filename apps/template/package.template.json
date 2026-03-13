@@ -16,14 +16,14 @@
     "verify:retranslate": "scalang verify --fix --retranslate"
   },
   "dependencies": {
-    "@scalang/react": "^0.0.2",
-    "@scalang/schema": "^0.0.4",
+    "@scalang/react": "^0.0.3",
+    "@scalang/schema": "^0.0.5",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@scalang/cli": "^0.0.7",
+    "@scalang/cli": "^0.0.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",

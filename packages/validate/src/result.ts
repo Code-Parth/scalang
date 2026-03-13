@@ -2,6 +2,10 @@
  * Verification result tracking.
  */
 
+export interface VerifyLogger {
+  log: (msg: string) => void;
+}
+
 export interface VerificationResult {
   passed: number;
   failed: number;
@@ -10,9 +14,10 @@ export interface VerificationResult {
   errors: string[];
   warns: string[];
   fixes: string[];
+  logger?: VerifyLogger;
 }
 
-export function createResult(): VerificationResult {
+export function createResult(logger?: VerifyLogger): VerificationResult {
   return {
     passed: 0,
     failed: 0,
@@ -21,30 +26,35 @@ export function createResult(): VerificationResult {
     errors: [],
     warns: [],
     fixes: [],
+    logger,
   };
+}
+
+function output(result: VerificationResult, msg: string): void {
+  (result.logger?.log ?? console.log)(msg);
 }
 
 export function pass(result: VerificationResult, msg: string): void {
   result.passed++;
-  console.log(`  [ok] ${msg}`);
+  output(result, `  [ok] ${msg}`);
 }
 
 export function fail(result: VerificationResult, msg: string): void {
   result.failed++;
   result.errors.push(msg);
-  console.log(`  [error] ${msg}`);
+  output(result, `  [error] ${msg}`);
 }
 
 export function warn(result: VerificationResult, msg: string): void {
   result.warnings++;
   result.warns.push(msg);
-  console.log(`  [warn] ${msg}`);
+  output(result, `  [warn] ${msg}`);
 }
 
 export function fixed(result: VerificationResult, msg: string): void {
   result.fixed++;
   result.fixes.push(msg);
-  console.log(`  [fix] Fixed: ${msg}`);
+  output(result, `  [fix] Fixed: ${msg}`);
 }
 
 export function printSummary(
@@ -52,7 +62,9 @@ export function printSummary(
   fixMode: boolean,
   retranslateMode: boolean
 ): void {
-  console.log("\n" + "─".repeat(60));
+  const log = result.logger?.log ?? console.log;
+
+  log("\n" + "─".repeat(60));
 
   const parts = [
     `${result.passed} passed`,
@@ -61,35 +73,35 @@ export function printSummary(
   ];
   if (result.fixed > 0) parts.push(`${result.fixed} fixed`);
 
-  console.log(`\n[summary] Summary: ${parts.join(", ")}\n`);
+  log(`\n[summary] Summary: ${parts.join(", ")}\n`);
 
   if (result.fixed > 0) {
-    console.log("Fixes applied:");
-    result.fixes.forEach((f) => console.log(`  [fix] ${f}`));
-    console.log();
+    log("Fixes applied:");
+    result.fixes.forEach((f) => log(`  [fix] ${f}`));
+    log("");
   }
 
   if (result.failed > 0 && !fixMode) {
-    console.log("Errors:");
-    result.errors.forEach((e) => console.log(`  [error] ${e}`));
-    console.log(
+    log("Errors:");
+    result.errors.forEach((e) => log(`  [error] ${e}`));
+    log(
       "\n   [hint] Run 'scalang verify --fix' to auto-repair these issues.\n"
     );
   }
 
   if (result.warnings > 0) {
-    console.log("Warnings:");
-    result.warns.forEach((w) => console.log(`  [warn] ${w}`));
+    log("Warnings:");
+    result.warns.forEach((w) => log(`  [warn] ${w}`));
     if (!retranslateMode) {
-      console.log(
+      log(
         "\n   [hint] Run 'scalang verify --retranslate' to translate untranslated fields.\n"
       );
     } else {
-      console.log();
+      log("");
     }
   }
 
   if (result.failed === 0) {
-    console.log("[ok] All checks passed!\n");
+    log("[ok] All checks passed!\n");
   }
 }

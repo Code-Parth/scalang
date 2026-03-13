@@ -19,6 +19,7 @@ import {
 } from "@scalang/checksum";
 import {
   type VerificationResult,
+  type VerifyLogger,
   createResult,
   pass,
   fail,
@@ -30,11 +31,14 @@ import { readJSON, writeJSON, countKeys } from "./helpers";
 import { verifyTagNames, verifyOperationIds, verifyRefs } from "./identifiers";
 import { detectEnglishScore } from "./english-detector";
 
+export type { VerifyLogger };
+
 export interface VerifyOptions {
   outputDir: string;
   config: ScalangConfig;
   fixMode?: boolean;
   retranslateMode?: boolean;
+  logger?: VerifyLogger;
 }
 
 /**
@@ -49,9 +53,11 @@ export async function verifySpecs(
     config,
     fixMode = false,
     retranslateMode = false,
+    logger,
   } = options;
 
-  const result = createResult();
+  const log = logger?.log ?? ((m: string) => console.log(m));
+  const result = createResult(logger);
   const { sourceLocale, targetLocales, defaultLocale, translatableFields } =
     config;
   const allLocales = [
@@ -66,15 +72,15 @@ export async function verifySpecs(
     : fixMode
       ? " (FIX MODE)"
       : "";
-  console.log(`\n[check] Scalang — Spec Verification${modeLabel}\n`);
+  log(`\n[check] Scalang — Spec Verification${modeLabel}\n`);
 
   // ── 1. Check manifest ──────────────────────────────────────────
-  console.log("[batch] Manifest:");
+  log("[batch] Manifest:");
   const manifestPath = join(outputDir, "manifest.json");
 
   if (!existsSync(manifestPath)) {
     fail(result, `manifest.json not found at ${manifestPath}`);
-    console.log("\n   Run 'scalang generate' first to generate specs.\n");
+    log("\n   Run 'scalang generate' first to generate specs.\n");
     printSummary(result, fixMode, retranslateMode);
     return result;
   }
@@ -115,7 +121,7 @@ export async function verifySpecs(
   }
 
   // ── 2. Check spec files ────────────────────────────────────────
-  console.log("\n[parse] Spec files:");
+  log("\n[parse] Spec files:");
   const specs: Record<string, Record<string, unknown>> = {};
 
   for (const locale of allLocales) {
@@ -150,7 +156,7 @@ export async function verifySpecs(
   }
 
   // ── 3. OpenAPI schema validation ───────────────────────────────
-  console.log("\n[schema] OpenAPI schema validation:");
+  log("\n[schema] OpenAPI schema validation:");
 
   const { validate } = await import("@scalar/openapi-parser");
 
@@ -172,9 +178,9 @@ export async function verifySpecs(
         warn(result, `${locale}.json — ${errorCount} validation issue(s)`);
         errors!
           .slice(0, 5)
-          .forEach((e) => console.log(`      → ${e ?? "Unknown error"}`));
+          .forEach((e) => log(`      → ${e ?? "Unknown error"}`));
         if (errorCount > 5) {
-          console.log(`      → ... and ${errorCount - 5} more`);
+          log(`      → ... and ${errorCount - 5} more`);
         }
       }
     }
@@ -188,7 +194,7 @@ export async function verifySpecs(
     return result;
   }
 
-  console.log("\n[struct] Structural integrity:");
+  log("\n[struct] Structural integrity:");
   const sourceKeys = countKeys(sourceSpec);
 
   for (const locale of targetLocales.filter((l) => l !== sourceLocale)) {
@@ -211,20 +217,20 @@ export async function verifySpecs(
   }
 
   // ── 5. Translation verification ────────────────────────────────
-  console.log("\n[i18n] Translation verification:");
+  log("\n[i18n] Translation verification:");
 
   const sourceTranslations = extractTranslatableFields(
     sourceSpec,
     translatableFields as TranslatableFieldGroup[]
   );
   const translatableKeys = Object.keys(sourceTranslations);
-  console.log(`   ${translatableKeys.length} translatable fields configured\n`);
+  log(`   ${translatableKeys.length} translatable fields configured\n`);
 
   for (const locale of targetLocales.filter((l) => l !== sourceLocale)) {
     const targetSpec = specs[locale];
     if (!targetSpec) continue;
 
-    console.log(`   ${locale}:`);
+    log(`   ${locale}:`);
 
     const retranslateCache = loadRetranslateCache(outputDir);
     const cachedFields = new Set(retranslateCache[locale] ?? []);
@@ -271,9 +277,9 @@ export async function verifySpecs(
     if (unchangedCount > 0) {
       warn(result, `${unchangedCount} translatable fields unchanged`);
       const display = unchangedFields.slice(0, 5);
-      display.forEach((f) => console.log(`      → ${f}`));
+      display.forEach((f) => log(`      → ${f}`));
       if (unchangedFields.length > 5) {
-        console.log(`      → ... and ${unchangedFields.length - 5} more`);
+        log(`      → ... and ${unchangedFields.length - 5} more`);
       }
 
       if (retranslateMode && unchangedFields.length > 0) {
@@ -427,7 +433,7 @@ export async function verifySpecs(
     }
 
     // ── 9. English word detection ────────────────────────────────
-    console.log(`\n   [note] Untranslated content analysis (${locale}):`);
+    log(`\n   [note] Untranslated content analysis (${locale}):`);
 
     let suspiciousCount = 0;
     const suspiciousFields: Array<{
@@ -456,14 +462,10 @@ export async function verifySpecs(
       );
       for (const { key, score, words } of suspiciousFields.slice(0, 5)) {
         const pct = (score * 100).toFixed(0);
-        console.log(
-          `      → ${key} (${pct}% English markers: ${words.join(", ")})`
-        );
+        log(`      → ${key} (${pct}% English markers: ${words.join(", ")})`);
       }
       if (suspiciousFields.length > 5) {
-        console.log(
-          `      → ... and ${suspiciousFields.length - 5} more fields`
-        );
+        log(`      → ... and ${suspiciousFields.length - 5} more fields`);
       }
     }
 
@@ -471,7 +473,7 @@ export async function verifySpecs(
     if (specModified && fixMode) {
       const specPath = join(outputDir, `${locale}.json`);
       writeJSON(specPath, targetSpec);
-      console.log(`\n   [save] Updated ${locale}.json with fixes`);
+      log(`\n   [save] Updated ${locale}.json with fixes`);
     }
   }
 
@@ -480,7 +482,7 @@ export async function verifySpecs(
     const localesWithGaps = Object.keys(fieldsToRetranslate);
 
     if (localesWithGaps.length === 0) {
-      console.log("\n[translate] Retranslation:");
+      log("\n[translate] Retranslation:");
       pass(
         result,
         "No untranslated fields found — all translations are up to date"
@@ -490,7 +492,7 @@ export async function verifySpecs(
         (sum, l) => sum + Object.keys(fieldsToRetranslate[l] ?? {}).length,
         0
       );
-      console.log(
+      log(
         `\n[translate] Retranslation: ${totalFields} field(s) across ${localesWithGaps.length} locale(s)`
       );
 
@@ -499,7 +501,7 @@ export async function verifySpecs(
       for (const locale of localesWithGaps) {
         const queue = fieldsToRetranslate[locale] ?? {};
         const fieldCount = Object.keys(queue).length;
-        console.log(`\n   ${locale}: translating ${fieldCount} field(s)...`);
+        log(`\n   ${locale}: translating ${fieldCount} field(s)...`);
 
         try {
           const translated = await translateMap(queue, sourceLocale, locale);
@@ -521,7 +523,7 @@ export async function verifySpecs(
               existing.add(field);
             }
             cache[locale] = [...existing];
-            console.log(
+            log(
               `      [info] ${confirmedIdentical.length} field(s) confirmed identical (cached)`
             );
           }
@@ -550,7 +552,7 @@ export async function verifySpecs(
       }
 
       saveRetranslateCache(outputDir, cache);
-      console.log(`\n   [save] Retranslate cache saved`);
+      log(`\n   [save] Retranslate cache saved`);
     }
   }
 

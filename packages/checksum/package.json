@@ -1,6 +1,6 @@
 {
   "name": "@scalang/checksum",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Checksum-based caching and generation state management for Scalang",
   "private": false,
   "license": "MIT",

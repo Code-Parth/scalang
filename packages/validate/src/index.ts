@@ -1,4 +1,4 @@
-export { verifySpecs, type VerifyOptions } from "./verify";
+export { verifySpecs, type VerifyOptions, type VerifyLogger } from "./verify";
 export {
   type VerificationResult,
   createResult,

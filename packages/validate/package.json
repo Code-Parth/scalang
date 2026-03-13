@@ -1,6 +1,6 @@
 {
   "name": "@scalang/validate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Spec verification, English detection, and identifier validation for Scalang with Lingo.dev and Scalar",
   "private": false,
   "license": "MIT",

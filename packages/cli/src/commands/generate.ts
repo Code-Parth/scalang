@@ -3,6 +3,8 @@
  * Generates translated OpenAPI specs with smart checksum-based caching.
  */
 
+import * as p from "@clack/prompts";
+import pc from "picocolors";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import {
@@ -26,12 +28,14 @@ import { verifySpecs } from "@scalang/validate";
 import { loadConfig, loadEnv } from "../config";
 import type { SpecManifest } from "@scalang/schema";
 
+const verifyLogger = { log: (msg: string) => p.log.message(msg) };
+
 export async function generateCommand(force: boolean): Promise<void> {
   loadEnv();
-  console.log("\n>> Scalang — Generating translated specs\n");
+  p.intro(pc.bgCyan(pc.black(" scalang — Generate ")));
 
   // 1. Load config
-  console.log("[config] Loading configuration...");
+  p.log.step("Loading configuration...");
   const config = loadConfig();
   const {
     source,
@@ -47,10 +51,14 @@ export async function generateCommand(force: boolean): Promise<void> {
     ...targetLocales.filter((l: string) => l !== sourceLocale),
   ];
 
-  console.log(`   Source: ${source}`);
-  console.log(`   Source locale: ${sourceLocale}`);
-  console.log(`   Target locales: ${targetLocales.join(", ")}`);
-  console.log(`   Default locale: ${defaultLocale}`);
+  p.log.message(
+    [
+      `  ${pc.dim("Source")}         ${source}`,
+      `  ${pc.dim("Source locale")}  ${sourceLocale}`,
+      `  ${pc.dim("Target locales")} ${targetLocales.join(", ")}`,
+      `  ${pc.dim("Default locale")} ${defaultLocale}`,
+    ].join("\n")
+  );
 
   // Smart skip: compare checksums
   const sourceSpecPath = resolve(process.cwd(), source);
@@ -74,80 +82,75 @@ export async function generateCommand(force: boolean): Promise<void> {
     );
 
   if (canSkip) {
-    console.log("\n[skip] No changes detected — skipping full regeneration.");
-    console.log(
-      `   Source checksum: ${currentSourceChecksum.slice(0, 12)}… (unchanged)`
+    p.log.message(
+      [
+        "No changes detected — skipping full regeneration.",
+        `  Source checksum: ${currentSourceChecksum.slice(0, 12)}… (unchanged)`,
+        `  Config checksum: ${currentConfigChecksum.slice(0, 12)}… (unchanged)`,
+        `  Last generated:  ${previousState!.generatedAt}`,
+      ].join("\n")
     );
-    console.log(
-      `   Config checksum: ${currentConfigChecksum.slice(0, 12)}… (unchanged)`
-    );
-    console.log(`   Last generated:  ${previousState!.generatedAt}`);
-    console.log("\n[check] Running verify:retranslate to check for gaps...\n");
+    p.log.step("Running verify:retranslate to check for gaps...");
 
     await verifySpecs({
       outputDir,
       config,
       fixMode: true,
       retranslateMode: true,
+      logger: verifyLogger,
     });
 
-    console.log(
-      "\n[done] Specs are up-to-date. No full regeneration needed.\n"
-    );
+    p.outro(pc.green("Specs are up-to-date. No full regeneration needed."));
     return;
   }
 
   // Log why we're regenerating
   if (force) {
-    console.log("\n[force] Force regeneration requested.\n");
+    p.log.message("Force regeneration requested.");
   } else if (!previousState) {
-    console.log(
-      "\n[note] No previous generation state — running full generation.\n"
-    );
+    p.log.message("No previous generation state — running full generation.");
   } else {
     const sourceUnchanged =
       previousState.sourceChecksum === currentSourceChecksum;
     const configUnchanged =
       previousState.configChecksum === currentConfigChecksum;
-    if (!sourceUnchanged)
-      console.log("   [note] Source spec changed — regenerating.");
-    if (!configUnchanged)
-      console.log("   [config] Config changed — regenerating.");
-    if (!allSpecsExist)
-      console.log("   [files] Some spec files missing — regenerating.");
-    console.log();
+    const reasons: string[] = [];
+    if (!sourceUnchanged) reasons.push("Source spec changed");
+    if (!configUnchanged) reasons.push("Config changed");
+    if (!allSpecsExist) reasons.push("Some spec files missing");
+    if (reasons.length > 0) {
+      p.log.message(`Regenerating: ${reasons.join(", ")}`);
+    }
   }
 
   // 2. Parse the source spec
-  console.log("[parse] Parsing OpenAPI spec...");
+  const parseSpinner = p.spinner();
+  parseSpinner.start("Parsing OpenAPI spec...");
   const { spec } = await loadSpec(source);
+  parseSpinner.stop(pc.green("✓") + " Parsed");
 
   // 3. Extract translatable fields
-  console.log("\n[check] Extracting translatable fields...");
+  p.log.step("Extracting translatable fields...");
   const enabledGroups = translatableFields.filter(
     (g: { enabled: boolean; name: string }) => g.enabled
   );
-  console.log(
-    `   Enabled field groups: ${enabledGroups.map((g: { name: string }) => g.name).join(", ")}`
-  );
   const translations = extractTranslatableFields(spec, translatableFields);
   const fieldCount = Object.keys(translations).length;
-  console.log(`   Found ${fieldCount} translatable strings`);
+  p.log.message(
+    `  Enabled groups: ${enabledGroups.map((g: { name: string }) => g.name).join(", ")} — ${fieldCount} translatable strings`
+  );
 
   if (fieldCount === 0) {
-    console.warn(
-      "\n[warn] No translatable fields found. Check your config and spec."
-    );
+    p.log.warn("No translatable fields found. Check your config and spec.");
   }
 
   // 4. Ensure output directory exists
   mkdirSync(outputDir, { recursive: true });
 
   // 5. Write source locale spec
-  console.log(`\n[note] Writing source locale spec (${sourceLocale})...`);
   const sourceOutputPath = join(outputDir, `${sourceLocale}.json`);
   writeFileSync(sourceOutputPath, JSON.stringify(spec, null, 2), "utf-8");
-  console.log(`   → ${sourceOutputPath}`);
+  p.log.message(`  Wrote source locale: ${sourceOutputPath}`);
 
   // 6. Translate and write each target locale
   const targetLocalesToTranslate = targetLocales.filter(
@@ -172,14 +175,13 @@ export async function generateCommand(force: boolean): Promise<void> {
     skippedLocales = skipped;
 
     if (skippedLocales.length > 0) {
-      console.log(
-        `\n[skip] Skipping unchanged locales: ${skippedLocales.join(", ")}`
-      );
+      p.log.message(`Skipping unchanged locales: ${skippedLocales.join(", ")}`);
     }
   }
 
   for (const locale of localesToTranslate) {
-    console.log(`\n[i18n] Translating to ${locale}...`);
+    const localeSpinner = p.spinner();
+    localeSpinner.start(`Translating to ${locale}...`);
 
     try {
       // Field-level diff: only translate changed/added fields when possible
@@ -201,9 +203,6 @@ export async function generateCommand(force: boolean): Promise<void> {
       if (hasFieldChangesOnly && fieldDiff.unchanged.length > 0) {
         // Incremental: only translate changed + added fields
         const changedKeys = [...fieldDiff.added, ...fieldDiff.changed];
-        console.log(
-          `   [diff] ${changedKeys.length} changed/added, ${fieldDiff.unchanged.length} unchanged, ${fieldDiff.removed.length} removed`
-        );
 
         // Load existing translated spec
         const existingSpec = JSON.parse(
@@ -224,16 +223,6 @@ export async function generateCommand(force: boolean): Promise<void> {
             batchSize
           );
           injectTranslations(translatedSpec, translatedMap);
-          console.log(
-            `   [ok] Translated ${changedKeys.length} changed field(s)`
-          );
-        }
-
-        // Remove deleted fields by re-injecting source values (which will be absent)
-        if (fieldDiff.removed.length > 0) {
-          console.log(
-            `   [clean] Removing ${fieldDiff.removed.length} deleted field(s)`
-          );
         }
       } else {
         // Full translation: new locale or force mode
@@ -254,17 +243,20 @@ export async function generateCommand(force: boolean): Promise<void> {
         JSON.stringify(translatedSpec, null, 2),
         "utf-8"
       );
-      console.log(`   [ok] ${locale} → ${outputPath}`);
+      localeSpinner.stop(pc.green("✓") + ` ${locale} → ${outputPath}`);
     } catch (err) {
-      console.error(`   [error] Failed to translate ${locale}:`, err);
+      localeSpinner.stop(pc.yellow("▲") + " Translation failed");
+      p.log.error(
+        `Failed to translate ${locale}: ${err instanceof Error ? err.message : String(err)}`
+      );
       const fallbackPath = join(outputDir, `${locale}.json`);
       writeFileSync(fallbackPath, JSON.stringify(spec, null, 2), "utf-8");
-      console.log(`   [warn] Using source spec as fallback for ${locale}`);
+      p.log.warn(`Using source spec as fallback for ${locale}`);
     }
   }
 
   // 7. Write manifest
-  console.log("\n[batch] Writing manifest...");
+  p.log.step("Writing manifest...");
   const manifest: SpecManifest = {
     locales: allLocales,
     defaultLocale,
@@ -273,18 +265,15 @@ export async function generateCommand(force: boolean): Promise<void> {
   };
   const manifestPath = join(outputDir, "manifest.json");
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
-  console.log(`   → ${manifestPath}`);
+  p.log.message(`  → ${manifestPath}`);
 
   if (localesToTranslate.length > 0) {
-    console.log(
-      "\n[done] Done! Translated locales:",
-      localesToTranslate.join(", ")
-    );
+    p.log.success(`Translated locales: ${localesToTranslate.join(", ")}`);
   }
   if (skippedLocales.length > 0) {
-    console.log("   Skipped (unchanged):", skippedLocales.join(", "));
+    p.log.message(`  Skipped (unchanged): ${skippedLocales.join(", ")}`);
   }
-  console.log(`   Output directory: ${outputDir}\n`);
+  p.log.message(`  Output directory: ${outputDir}`);
 
   // 8. Save generation state with per-locale checksums
   const allGeneratedLocales = [sourceLocale, ...localesToTranslate];
@@ -305,32 +294,35 @@ export async function generateCommand(force: boolean): Promise<void> {
     localeChecksums,
     sourceFieldChecksums: buildFieldChecksums(translations),
   });
-  console.log("   [save] Generation state saved.\n");
+  p.log.message("  Generation state saved.");
 
   // 9. Post-generation verification
-  console.log("[check] Running post-generation verification...\n");
+  p.log.step("Running post-generation verification...");
 
   await verifySpecs({
     outputDir,
     config,
     fixMode: true,
     retranslateMode: true,
+    logger: verifyLogger,
   });
 
-  console.log("\n[check] Final verification pass...\n");
+  p.log.step("Final verification pass...");
 
   const finalResult = await verifySpecs({
     outputDir,
     config,
     fixMode: false,
     retranslateMode: false,
+    logger: verifyLogger,
   });
 
   if (finalResult.failed === 0) {
-    console.log("\n[ok] Build-time verification passed — specs are clean.\n");
+    p.outro(pc.green("Done! Translated specs generated."));
   } else {
-    console.warn(
-      "\n[warn] Final verification found remaining issues. Review warnings above.\n"
+    p.log.warn(
+      "Final verification found remaining issues. Review warnings above."
     );
+    p.outro(pc.yellow("Generation complete with verification warnings."));
   }
 }

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "scalang generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -23,7 +24,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@scalang/cli": "^0.0.8",
+    "@scalang/cli": "^0.0.9",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",

@@ -201,15 +201,32 @@ export async function generateCommand(force: boolean): Promise<void> {
       let translatedSpec;
 
       if (hasFieldChangesOnly && fieldDiff.unchanged.length > 0) {
-        // Incremental: only translate changed + added fields
-        const changedKeys = [...fieldDiff.added, ...fieldDiff.changed];
+        // Incremental: only translate changed + added fields.
+        //
+        // IMPORTANT: base must be a fresh clone of the CURRENT source spec,
+        // not the old locale file. If a new endpoint was added, the old locale
+        // file does not have that path structure, so injectTranslations would
+        // silently discard translations for those new paths.
+        translatedSpec = cloneSpec(spec);
 
-        // Load existing translated spec
+        // Re-apply existing translations for unchanged fields from the old
+        // locale file so we don't lose already-translated text.
         const existingSpec = JSON.parse(
           readFileSync(existingSpecPath, "utf-8")
         );
-        translatedSpec = existingSpec;
+        const existingTranslations = extractTranslatableFields(
+          existingSpec,
+          translatableFields
+        );
+        const unchangedTranslations: Record<string, string> = {};
+        for (const key of fieldDiff.unchanged) {
+          const val = existingTranslations[key];
+          if (val !== undefined) unchangedTranslations[key] = val;
+        }
+        injectTranslations(translatedSpec, unchangedTranslations);
 
+        // Translate only the changed + added fields and inject on top.
+        const changedKeys = [...fieldDiff.added, ...fieldDiff.changed];
         if (changedKeys.length > 0) {
           const fieldsToTranslate: Record<string, string> = {};
           for (const key of changedKeys) {

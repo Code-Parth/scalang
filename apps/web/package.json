@@ -12,8 +12,11 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@scalang/schema": "*",
+    "gsap": "^3.14.2",
     "next": "16.1.5",
+    "ogl": "^1.0.11",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
